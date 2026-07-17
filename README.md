@@ -1,4 +1,4 @@
-# UXVision AI — Autonomous Browser Exploration & Spacing Quality Platform
+# UXVision AI — Autonomous Browser Exploration & Spacing Quality Platform..
 
 UXVision AI is a research-grade, autonomous visual analysis and layout quality evaluation system. Unlike traditional static web page crawlers, UXVision AI employs an intelligent, state-driven browser exploration agent to discover dynamic layout changes, construct interactive sitemaps, verify accessibility rules (WCAG 2.1), and calculate consolidated visual layout scores using machine learning and computer vision.
 
