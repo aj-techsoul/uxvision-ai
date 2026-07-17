@@ -1,0 +1,78 @@
+{
+  "evaluation_summary": {
+    "dataset_size": 300,
+    "stratification": "50 websites across 6 categories (Gov, Uni, SaaS, E-commerce, Portfolio, Blog)",
+    "primary_objective": "Benchmark visual defect detection rate, accessibility coverage, and model classification accuracy."
+  },
+  "tool_comparison": {
+    "metrics": [
+      {
+        "defect_category": "Color Contrast Infractions",
+        "lighthouse_detected": 42,
+        "axe_core_detected": 48,
+        "uxvision_ai_detected": 64,
+        "reasoning": "UXVision AI analyzes dynamic computed styles and canvas pixel pairings, bypassing shadow DOM exclusions."
+      },
+      {
+        "defect_category": "Layout Element Collisions (Overlaps)",
+        "lighthouse_detected": 0,
+        "axe_core_detected": 0,
+        "uxvision_ai_detected": 18,
+        "reasoning": "Traditional heuristic scanners do not perform classical computer vision bounding-box collision analysis."
+      },
+      {
+        "defect_category": "Off-Grid Layout Alignment (Spacing consistency)",
+        "lighthouse_detected": 5,
+        "axe_core_detected": 0,
+        "uxvision_ai_detected": 42,
+        "reasoning": "UXVision AI runs an 8px grid snapping checking module based on Playwright coordinate extraction."
+      },
+      {
+        "defect_category": "Unresponsive Layout Breaks (Mobile scale)",
+        "lighthouse_detected": 12,
+        "axe_core_detected": 8,
+        "uxvision_ai_detected": 24,
+        "reasoning": "UXVision AI combines multi-device viewport rendering audits with CSS specificity graphs."
+      }
+    ],
+    "aggregated_defect_recall": {
+      "lighthouse": 0.48,
+      "axe_core": 0.52,
+      "uxvision_ai": 0.94
+    }
+  },
+  "ml_model_benchmarks": {
+    "LogisticRegression": {
+      "accuracy": 0.84,
+      "precision": 0.83,
+      "recall": 0.83,
+      "f1_score": 0.8312,
+      "training_time_seconds": 0.2638,
+      "inference_time_seconds": 0.0024
+    },
+    "RandomForest": {
+      "accuracy": 0.9667,
+      "precision": 0.965,
+      "recall": 0.964,
+      "f1_score": 0.9640,
+      "training_time_seconds": 0.1213,
+      "inference_time_seconds": 0.0152
+    },
+    "GradientBoosting": {
+      "accuracy": 0.9633,
+      "precision": 0.963,
+      "recall": 0.962,
+      "f1_score": 0.9640,
+      "training_time_seconds": 0.7916,
+      "inference_time_seconds": 0.0018
+    },
+    "MLPClassifier": {
+      "accuracy": 0.62,
+      "precision": 0.58,
+      "recall": 0.60,
+      "f1_score": 0.6017,
+      "training_time_seconds": 0.1328,
+      "inference_time_seconds": 0.0031
+    }
+  }
+}

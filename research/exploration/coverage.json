@@ -1,0 +1,11 @@
+{
+  "navigation": 40,
+  "interaction": 6,
+  "clickable": 2,
+  "forms": 65,
+  "visual": 82,
+  "accessibility": 78,
+  "scroll": 100,
+  "journey": 85,
+  "state": 4
+}

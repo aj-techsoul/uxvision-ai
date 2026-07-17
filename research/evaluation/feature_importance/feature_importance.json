@@ -1,0 +1,77 @@
+[
+  {
+    "rank": 1,
+    "feature": "colorHarmony",
+    "importance": 0.12362357465634013
+  },
+  {
+    "rank": 2,
+    "feature": "visualDesignScore",
+    "importance": 0.10255888457668158
+  },
+  {
+    "rank": 3,
+    "feature": "contrastRatio",
+    "importance": 0.08783834308649757
+  },
+  {
+    "rank": 4,
+    "feature": "spacingConsistency",
+    "importance": 0.07686779826017956
+  },
+  {
+    "rank": 5,
+    "feature": "gridScore",
+    "importance": 0.07469047685152039
+  },
+  {
+    "rank": 6,
+    "feature": "headingHierarchy",
+    "importance": 0.06993078430953457
+  },
+  {
+    "rank": 7,
+    "feature": "linkGraphScore",
+    "importance": 0.06892084780752158
+  },
+  {
+    "rank": 8,
+    "feature": "domDepthScore",
+    "importance": 0.0685167912304918
+  },
+  {
+    "rank": 9,
+    "feature": "typographyScore",
+    "importance": 0.06829556905107351
+  },
+  {
+    "rank": 10,
+    "feature": "semanticCoverage",
+    "importance": 0.05534940809691106
+  },
+  {
+    "rank": 11,
+    "feature": "cssSpecificityHealth",
+    "importance": 0.05266971079886698
+  },
+  {
+    "rank": 12,
+    "feature": "elementDiversity",
+    "importance": 0.04943777654801922
+  },
+  {
+    "rank": 13,
+    "feature": "accessibilityScore",
+    "importance": 0.04542525710124951
+  },
+  {
+    "rank": 14,
+    "feature": "readabilityScore",
+    "importance": 0.03917193705121903
+  },
+  {
+    "rank": 15,
+    "feature": "performanceScore",
+    "importance": 0.016702840573893624
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "url": "https://example.com",
+  "title": "Example Domain",
+  "cssCount": 5,
+  "layoutElementsCount": 2,
+  "hasDesktopScreenshot": true,
+  "hasTabletScreenshot": true,
+  "hasMobileScreenshot": true,
+  "hasAccessibilityTree": true
+}

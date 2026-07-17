@@ -1,0 +1,17 @@
+{
+  "websites": [
+    "https://example.com",
+    "https://github.com",
+    "https://news.ycombinator.com",
+    "https://www.wikipedia.org",
+    "https://www.python.org",
+    "https://www.npmjs.com",
+    "https://www.google.com",
+    "https://react.dev",
+    "https://nextjs.org",
+    "https://html.spec.whatwg.org"
+  ],
+  "concurrency": 5,
+  "repeat_runs": 3,
+  "browser": "chromium"
+}

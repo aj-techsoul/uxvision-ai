@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "sprouts": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\kajol\\.antigravity-ide\\extensions\\sprouts.sprouts-companion-0.5.36-universal\\mcp\\sprouts-mcp.cjs"
+      ],
+      "env": {
+        "SPROUTS_API_URL": "https://getsprouts.io"
+      }
+    }
+  }
+}

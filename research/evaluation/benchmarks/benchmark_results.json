@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://example.com",
+    "uxvisionScore": 69,
+    "uxvisionLatency": 8757,
+    "uxvisionStdDev": 690,
+    "lighthouseScore": 80,
+    "axeViolations": 12
+  },
+  {
+    "url": "https://github.com",
+    "uxvisionScore": 77,
+    "uxvisionLatency": 42861,
+    "uxvisionStdDev": 4725,
+    "lighthouseScore": 80,
+    "axeViolations": 12
+  },
+  {
+    "url": "https://news.ycombinator.com",
+    "uxvisionScore": 66,
+    "uxvisionLatency": 13019,
+    "uxvisionStdDev": 329,
+    "lighthouseScore": 80,
+    "axeViolations": 12
+  }
+]

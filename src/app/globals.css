@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #06090e;
+  --foreground: #f8fafc;
+  --card-bg: rgba(15, 23, 42, 0.6);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --primary: #02c39a;
+  --primary-hover: #00a896;
+  --primary-dark: #028090;
+  --secondary: #0f172a;
+  --secondary-border: rgba(2, 195, 154, 0.2);
+  --muted: #94a3b8;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --success: #10b981;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+}
+
+/* Glassmorphism primitives */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(2, 195, 154, 0.3);
+  box-shadow: 0 0 25px rgba(2, 195, 154, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #06090e;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Accent Glowing animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+.glow-bg {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(2, 195, 154, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  animation: pulse-glow 8s infinite ease-in-out;
+}
+
+/* Typography styles */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+/* Print utility styles for reports */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .glass-panel {
+    background: none !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+}

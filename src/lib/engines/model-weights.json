@@ -1,0 +1,109 @@
+{
+  "best_model_name": "RandomForest",
+  "f1_score": 0.9639852547593799,
+  "feature_importances": [
+    {
+      "feature": "colorHarmony",
+      "importance": 0.12362357465634013
+    },
+    {
+      "feature": "visualDesignScore",
+      "importance": 0.10255888457668158
+    },
+    {
+      "feature": "contrastRatio",
+      "importance": 0.08783834308649757
+    },
+    {
+      "feature": "spacingConsistency",
+      "importance": 0.07686779826017956
+    },
+    {
+      "feature": "gridScore",
+      "importance": 0.07469047685152039
+    },
+    {
+      "feature": "headingHierarchy",
+      "importance": 0.06993078430953457
+    },
+    {
+      "feature": "linkGraphScore",
+      "importance": 0.06892084780752158
+    },
+    {
+      "feature": "domDepthScore",
+      "importance": 0.0685167912304918
+    },
+    {
+      "feature": "typographyScore",
+      "importance": 0.06829556905107351
+    },
+    {
+      "feature": "semanticCoverage",
+      "importance": 0.05534940809691106
+    },
+    {
+      "feature": "cssSpecificityHealth",
+      "importance": 0.05266971079886698
+    },
+    {
+      "feature": "elementDiversity",
+      "importance": 0.04943777654801922
+    },
+    {
+      "feature": "accessibilityScore",
+      "importance": 0.04542525710124951
+    },
+    {
+      "feature": "readabilityScore",
+      "importance": 0.03917193705121903
+    },
+    {
+      "feature": "performanceScore",
+      "importance": 0.016702840573893624
+    }
+  ],
+  "validationMetrics": {
+    "accuracy": 0.9666666666666667,
+    "precision": 0.9672619047619047,
+    "recall": 0.9633838383838385,
+    "f1Score": 0.9639852547593799,
+    "confusionMatrix": [
+      [
+        11,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        10,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        17,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        20,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  }
+}

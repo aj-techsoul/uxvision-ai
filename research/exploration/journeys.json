@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Default Walkpath",
+    "path": [
+      "https://example.com/",
+      "https://www.iana.org/help/example-domains",
+      "https://www.iana.org/about",
+      "https://www.iana.org/about"
+    ]
+  }
+]
