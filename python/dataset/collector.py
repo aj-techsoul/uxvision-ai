@@ -3,14 +3,20 @@ import csv
 import numpy as np
 
 def generate_website_dataset(output_dir="research/dataset"):
+    """
+    Generate a research-grade synthetic UX dataset with 1000 samples.
+    
+    Key improvements over the previous version:
+    - 1000 samples (up from 300) for better generalization
+    - 10 website categories instead of 6 for greater diversity
+    - Realistic inter-feature correlations (good design correlates across dimensions)
+    - Noise injection to prevent the model from learning trivially separable boundaries
+    - Label assignment based on weighted composite score, not hardcoded per category
+    - 4-class balanced output: Excellent (3), Good (2), Average (1), Poor (0)
+    """
     os.makedirs(output_dir, exist_ok=True)
     features_path = os.path.join(output_dir, "features.csv")
     
-def generate_website_dataset(output_dir="research/dataset"):
-    os.makedirs(output_dir, exist_ok=True)
-    features_path = os.path.join(output_dir, "features.csv")
-    
-    # Feature headers: 15 distinct numerical UI/UX and visual metric parameters
     headers = [
         "accessibilityScore", "visualDesignScore", "typographyScore", "readabilityScore",
         "gridScore", "contrastRatio", "performanceScore", "domDepthScore",
@@ -18,155 +24,123 @@ def generate_website_dataset(output_dir="research/dataset"):
         "cssSpecificityHealth", "colorHarmony", "spacingConsistency", "label"
     ]
     
-    categories = ["Government", "University", "SaaS", "E-commerce", "Portfolio", "Blog"]
-    websites_per_category = 50
-    total_records = len(categories) * websites_per_category
+    # Category archetypes: (base_quality, variance, contrast_mean, contrast_std, dom_depth_mean)
+    # base_quality controls the mean of most 0-100 features
+    # Higher quality = higher scores, lower DOM depth (cleaner code)
+    categories = {
+        "SaaS_Premium":     {"base": 90, "var": 4,  "contrast": (9.0, 2.0), "dom": (30, 6)},
+        "SaaS_Startup":     {"base": 82, "var": 6,  "contrast": (7.5, 2.0), "dom": (38, 8)},
+        "Portfolio_Pro":    {"base": 88, "var": 5,  "contrast": (8.5, 2.5), "dom": (28, 6)},
+        "Ecommerce_Major":  {"base": 78, "var": 5,  "contrast": (6.5, 1.5), "dom": (50, 8)},
+        "Ecommerce_Small":  {"base": 68, "var": 7,  "contrast": (5.0, 1.5), "dom": (60, 10)},
+        "Blog_Modern":      {"base": 76, "var": 5,  "contrast": (6.0, 1.5), "dom": (45, 7)},
+        "Blog_Legacy":      {"base": 58, "var": 8,  "contrast": (3.5, 1.0), "dom": (75, 10)},
+        "University":       {"base": 62, "var": 7,  "contrast": (4.2, 1.2), "dom": (72, 9)},
+        "Government":       {"base": 52, "var": 9,  "contrast": (3.5, 1.0), "dom": (82, 8)},
+        "Personal_Hobby":   {"base": 45, "var": 12, "contrast": (3.0, 1.5), "dom": (88, 10)},
+    }
     
-    print(f"[Dataset Collector] Compiling balanced dataset of {total_records} websites...")
+    samples_per_category = 100
     
     np.random.seed(42)
+    
+    # Feature-level weight vector for composite quality scoring (label assignment)
+    # These weights reflect realistic importance of each dimension to overall UX quality
+    LABEL_WEIGHTS = np.array([
+        0.12,  # accessibilityScore
+        0.12,  # visualDesignScore
+        0.08,  # typographyScore
+        0.06,  # readabilityScore
+        0.08,  # gridScore
+        0.10,  # contrastRatio (will be normalized to 0-100 scale)
+        0.08,  # performanceScore
+        0.06,  # domDepthScore (inverted: lower depth = better)
+        0.06,  # semanticCoverage
+        0.05,  # elementDiversity
+        0.05,  # headingHierarchy
+        0.04,  # linkGraphScore
+        0.03,  # cssSpecificityHealth
+        0.04,  # colorHarmony
+        0.03,  # spacingConsistency
+    ])
+    
+    all_rows = []
+    
+    for cat_name, params in categories.items():
+        base = params["base"]
+        var = params["var"]
+        c_mean, c_std = params["contrast"]
+        d_mean, d_std = params["dom"]
+        
+        for i in range(samples_per_category):
+            # Generate correlated features: a shared quality factor plus individual noise
+            shared_quality = np.random.normal(base, var * 0.6)
+            
+            features = []
+            # accessibility, visual, typography, readability, grid
+            for _ in range(5):
+                val = shared_quality + np.random.normal(0, var * 0.8)
+                features.append(np.clip(round(val, 2), 10, 100))
+            
+            # contrastRatio (1-21 scale)
+            contrast = np.clip(round(np.random.normal(c_mean, c_std), 2), 1.0, 21.0)
+            features.append(contrast)
+            
+            # performance
+            perf = shared_quality + np.random.normal(-5, var)
+            features.append(np.clip(round(perf, 2), 10, 100))
+            
+            # domDepthScore (inverted: lower = better quality sites)
+            dom = np.clip(round(np.random.normal(d_mean, d_std), 2), 10, 100)
+            features.append(dom)
+            
+            # semantic, diversity, hierarchy, linkGraph, cssHealth, colorHarmony, spacing
+            for _ in range(7):
+                val = shared_quality + np.random.normal(-2, var * 0.9)
+                features.append(np.clip(round(val, 2), 10, 100))
+            
+            # Compute composite score for label assignment
+            score_features = features.copy()
+            # Normalize contrast to 0-100 scale for scoring
+            score_features[5] = min(100, (contrast / 10.0) * 100)
+            # Invert DOM depth (lower is better)
+            score_features[7] = 100 - dom
+            
+            composite = np.dot(score_features, LABEL_WEIGHTS)
+            
+            # Add noise to label boundaries to prevent trivial separation
+            composite += np.random.normal(0, 3)
+            
+            # Assign label based on composite score
+            if composite >= 80:
+                label = 3  # Excellent
+            elif composite >= 65:
+                label = 2  # Good
+            elif composite >= 50:
+                label = 1  # Average
+            else:
+                label = 0  # Poor
+            
+            all_rows.append(features + [label])
+    
+    # Shuffle to break category ordering
+    np.random.shuffle(all_rows)
     
     with open(features_path, mode="w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(headers)
-        
-        for cat in categories:
-            for i in range(websites_per_category):
-                # We model distributions representing actual site characteristics:
-                if cat == "Government":
-                    accessibility = np.random.normal(55, 10)
-                    visual = np.random.normal(60, 10)
-                    typography = np.random.normal(58, 8)
-                    readability = np.random.normal(45, 10)
-                    grid = np.random.normal(62, 8)
-                    contrast = np.random.normal(3.8, 1.2)
-                    performance = np.random.normal(48, 12)
-                    dom_depth = np.random.normal(85, 10)
-                    semantic = np.random.normal(40, 12)
-                    diversity = np.random.normal(45, 8)
-                    hierarchy = np.random.normal(50, 10)
-                    link_graph = np.random.normal(52, 8)
-                    specificity = np.random.normal(45, 8)
-                    harmony = np.random.normal(55, 10)
-                    spacing = np.random.normal(52, 8)
-                    score_label = 1 # Average
-                elif cat == "University":
-                    accessibility = np.random.normal(60, 8)
-                    visual = np.random.normal(62, 8)
-                    typography = np.random.normal(60, 7)
-                    readability = np.random.normal(52, 9)
-                    grid = np.random.normal(64, 7)
-                    contrast = np.random.normal(4.1, 1.0)
-                    performance = np.random.normal(55, 10)
-                    dom_depth = np.random.normal(78, 8)
-                    semantic = np.random.normal(48, 10)
-                    diversity = np.random.normal(50, 7)
-                    hierarchy = np.random.normal(55, 8)
-                    link_graph = np.random.normal(58, 7)
-                    specificity = np.random.normal(50, 7)
-                    harmony = np.random.normal(60, 8)
-                    spacing = np.random.normal(58, 7)
-                    score_label = 1 # Average
-                elif cat == "SaaS":
-                    accessibility = np.random.normal(88, 5)
-                    visual = np.random.normal(92, 4)
-                    typography = np.random.normal(90, 4)
-                    readability = np.random.normal(85, 5)
-                    grid = np.random.normal(92, 3)
-                    contrast = np.random.normal(8.5, 2.5)
-                    performance = np.random.normal(85, 8)
-                    dom_depth = np.random.normal(35, 8)
-                    semantic = np.random.normal(88, 5)
-                    diversity = np.random.normal(78, 6)
-                    hierarchy = np.random.normal(90, 4)
-                    link_graph = np.random.normal(88, 4)
-                    specificity = np.random.normal(86, 4)
-                    harmony = np.random.normal(88, 5)
-                    spacing = np.random.normal(90, 4)
-                    score_label = 3 # Excellent
-                elif cat == "E-commerce":
-                    accessibility = np.random.normal(75, 6)
-                    visual = np.random.normal(80, 5)
-                    typography = np.random.normal(78, 6)
-                    readability = np.random.normal(72, 7)
-                    grid = np.random.normal(82, 5)
-                    contrast = np.random.normal(6.2, 1.8)
-                    performance = np.random.normal(70, 9)
-                    dom_depth = np.random.normal(55, 7)
-                    semantic = np.random.normal(72, 6)
-                    diversity = np.random.normal(84, 5)
-                    hierarchy = np.random.normal(78, 6)
-                    link_graph = np.random.normal(80, 5)
-                    specificity = np.random.normal(76, 5)
-                    harmony = np.random.normal(78, 6)
-                    spacing = np.random.normal(80, 5)
-                    score_label = 2 # Good
-                elif cat == "Portfolio":
-                    accessibility = np.random.normal(85, 5)
-                    visual = np.random.normal(94, 3)
-                    typography = np.random.normal(88, 5)
-                    readability = np.random.normal(82, 6)
-                    grid = np.random.normal(90, 4)
-                    contrast = np.random.normal(9.0, 3.0)
-                    performance = np.random.normal(78, 8)
-                    dom_depth = np.random.normal(30, 6)
-                    semantic = np.random.normal(82, 6)
-                    diversity = np.random.normal(85, 5)
-                    hierarchy = np.random.normal(84, 5)
-                    link_graph = np.random.normal(80, 6)
-                    specificity = np.random.normal(82, 5)
-                    harmony = np.random.normal(92, 4)
-                    spacing = np.random.normal(88, 5)
-                    score_label = 3 # Excellent
-                else: # Blog
-                    accessibility = np.random.normal(78, 6)
-                    visual = np.random.normal(80, 6)
-                    typography = np.random.normal(76, 5)
-                    readability = np.random.normal(78, 5)
-                    grid = np.random.normal(78, 5)
-                    contrast = np.random.normal(5.5, 1.5)
-                    performance = np.random.normal(72, 8)
-                    dom_depth = np.random.normal(48, 6)
-                    semantic = np.random.normal(74, 5)
-                    diversity = np.random.normal(76, 5)
-                    hierarchy = np.random.normal(78, 5)
-                    link_graph = np.random.normal(75, 5)
-                    specificity = np.random.normal(74, 5)
-                    harmony = np.random.normal(76, 5)
-                    spacing = np.random.normal(76, 5)
-                    score_label = 2 # Good
-
-                # Clip and snap to boundaries
-                accessibility = max(10, min(100, accessibility))
-                visual = max(10, min(100, visual))
-                typography = max(10, min(100, typography))
-                readability = max(10, min(100, readability))
-                grid = max(10, min(100, grid))
-                contrast = max(1.0, min(21.0, contrast))
-                performance = max(10, min(100, performance))
-                dom_depth = max(10, min(100, dom_depth))
-                semantic = max(10, min(100, semantic))
-                diversity = max(10, min(100, diversity))
-                hierarchy = max(10, min(100, hierarchy))
-                link_graph = max(10, min(100, link_graph))
-                specificity = max(10, min(100, specificity))
-                harmony = max(10, min(100, harmony))
-                spacing = max(10, min(100, spacing))
-                
-                # Make labels reflect realistic quality categories
-                # 3 = Excellent, 2 = Good, 1 = Average, 0 = Poor
-                if accessibility < 50 or visual < 50 or performance < 30 or contrast < 3.0:
-                    score_label = 0 # Poor
-                
-                row = [
-                    round(accessibility, 2), round(visual, 2), round(typography, 2), round(readability, 2),
-                    round(grid, 2), round(contrast, 2), round(performance, 2), round(dom_depth, 2),
-                    round(semantic, 2), round(diversity, 2), round(hierarchy, 2), round(link_graph, 2),
-                    round(specificity, 2), round(harmony, 2), round(spacing, 2), score_label
-                ]
-                writer.writerow(row)
-                
-    print(f"[Dataset Collector] Completed features.csv generation under {features_path}.")
+        for row in all_rows:
+            writer.writerow(row)
+    
+    # Print label distribution
+    labels = [r[-1] for r in all_rows]
+    from collections import Counter
+    dist = Counter(labels)
+    total = len(all_rows)
+    print(f"[Dataset Collector] Generated {total} samples -> {features_path}")
+    for lbl in sorted(dist.keys()):
+        pct = dist[lbl] / total * 100
+        print(f"  Class {lbl}: {dist[lbl]} samples ({pct:.1f}%)")
 
 if __name__ == "__main__":
     generate_website_dataset()
